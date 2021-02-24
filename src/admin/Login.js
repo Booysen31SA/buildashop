@@ -1,10 +1,13 @@
+'use strict'
+
 import React from 'react';
 import { Col, Container, Form, Row, Button, Image } from 'react-bootstrap';
 import styled from 'styled-components';
 import avatar from '../assests/avatar/avatart.png';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { rememberSave } from './Functions/Functions';
+import { login } from './Functions/Functions';
+import { Redirect, withRouter } from 'react-router-dom';
 
 export const Login = () => {
 
@@ -60,12 +63,15 @@ export const Login = () => {
             onSubmit={
                 async (values) => {
                 await new Promise((r) => setTimeout(r, 500));
-                var json = values.email;
                 var email = values.email;
                 var password = values.password;
                 var rememeber = values.rememberme;
 
-                rememberSave(email, password, rememeber);
+                var success = login(email, password, rememeber);
+                alert(success);
+                if(success){
+                    window.location = '/admin';
+                }
               }}
             initialValues={{
                 email: '',
