@@ -13,8 +13,7 @@ export default class ProtectedRoute extends React.Component {
             )
             :
             (
-                 <Redirect to={{ pathname : '/admin/login' }} />
-                // <Component />
+                <Redirect to={{ pathname : '/admin/login' }} />
             );
 
     }

@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Col, Container, Form, Row, Button, Image } from 'react-bootstrap';
 import styled from 'styled-components';
 import avatar from '../assests/avatar/avatart.png';
+import { Formik } from 'formik';
+import * as yup from 'yup';
+import { rememberSave } from './Functions/Functions';
 
 export const Login = () => {
-    const [validated, setValidated] = useState(false);
 
-    const handleSubmit = (event) => {
-        const form = event.currentTarget;
-        if (form.checkValidity() === false) {
-            event.preventDefault();
-            event.stopPropagation();
-        }
+    const schema = yup.object().shape({
+        email: yup.string().required(),
+        password: yup.string().required(),
+        rememberMe: yup.boolean(),
+    });
 
-        setValidated(true);
-    }
 
     const Styles = styled.div`
     .button{
@@ -54,58 +53,111 @@ export const Login = () => {
     }
     `;
 
-return (
-    <Styles>
-        <div className="body">
-            <Container>
-                <Row className="center">
-                    <Col lg={3}></Col>
-                    <Col className="loginBackground">
-                        <h1 className="defaultCenter">Login</h1>
-                        <div className="defaultCenter">
-                            <Image roundedCircle src={avatar} />
-                        </div>
+    return (
+        <Styles>
+        <Formik
+            validationSchema={schema}
+            onSubmit={
+                async (values) => {
+                await new Promise((r) => setTimeout(r, 500));
+                var json = values.email;
+                var email = values.email;
+                var password = values.password;
+                var rememeber = values.rememberme;
 
-                        <hr></hr>
-                        <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                rememberSave(email, password, rememeber);
+              }}
+            initialValues={{
+                email: '',
+                password: '',
+                rememberme: false
+            }}
+        >
+            {({
+                handleSubmit,
+                handleChange,
+                handleBlur,
+                values,
+                touched,
+                isValid,
+                errors,
+            }) => (
+                
+                    <div className="body">
+                        <Container>
+                            <Row className="center">
+                                <Col lg={3}></Col>
+                                <Col className="loginBackground">
+                                    <h1 className="defaultCenter">Login</h1>
+                                    <div className="defaultCenter">
+                                        <Image roundedCircle src={avatar} />
+                                    </div>
 
-                            <Form.Group controlId="formBasicEmail">
-                                <Form.Control required className="fields" type="email" placeholder="Enter email" />
-                                <Form.Control.Feedback type="invalid">
-                                    Please provide a valid email.
-                                 </Form.Control.Feedback>
-                                <Form.Text className="text-muted">
-                                    We'll never share your email with anyone else.
-                                 </Form.Text>
-                            </Form.Group>
+                                    <hr></hr>
+                                    <Form noValidate onSubmit={handleSubmit}>
 
-                            <Form.Group controlId="formBasicPassword">
-                                <Form.Control required className="fields" type="password" placeholder="Password" />
-                                <Form.Control.Feedback type="invalid">
-                                    Please provide a valid password.
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                            <Form.Group controlId="formBasicCheckbox">
-                                <Form.Check type="checkbox" >
-                                    <Form.Check.Input></Form.Check.Input>
-                                    <Form.Check.Label>Remember me</Form.Check.Label>
-                                </Form.Check>
-                            </Form.Group>
+                                        <Form.Group controlId="validationFormik01">
+                                            <Form.Control
+                                                className="fields"
+                                                type="email"
+                                                placeholder="Enter email"
+                                                name="email"
+                                                value={values.email}
+                                                onChange={handleChange}
+                                                isValid={touched.email && !errors.email}
+                                                isInvalid={!!errors.email}
+                                            />
 
-                            <div className="button">
-                                <Button variant="primary" type="submit" block>
-                                    Login
-                            </Button>
-                            </div>
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.email}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
 
-                        </Form>
+                                        <Form.Group controlId="validationFormik02">
+                                            <Form.Control
+                                                className="fields"
+                                                type="password"
+                                                placeholder="Password"
+                                                name="password"
+                                                value={values.password}
+                                                onChange={handleChange}
+                                                isValid={touched.password && !errors.password}
+                                                isInvalid={!!errors.password} />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.password}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
 
-                    </Col>
-                    <Col lg={4}></Col>
-                </Row>
-            </Container>
+                                        <Form.Group>
+                                            <Form.Check
+                                                name="rememberMe"
+                                                label="Remember me"
+                                                id="validationFormik0"
+                                                onChange={handleChange}
+                                            />
 
-        </div>
-    </Styles>
-)
+                                            <Form.Text className="text-muted">
+                                                Please keep your email and password secure.
+                                            </Form.Text>
+                                        </Form.Group>
+
+                                        <br></br>
+                                        <div className="button">
+                                            <Button variant="primary" type="submit" block>
+                                                Login
+                                            </Button>
+                                        </div>
+
+                                    </Form>
+
+                                </Col>
+                                <Col lg={4}></Col>
+                            </Row>
+                        </Container>
+                    </div>
+                
+            )}
+        </Formik>
+        </Styles>
+    );
 };
